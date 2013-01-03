@@ -34,6 +34,7 @@ class WeblinksControllerWeblink extends JControllerForm
 	 */
 	public function add()
 	{
+
 		if (!parent::add()) {
 			// Redirect to the return page.
 			$this->setRedirect($this->getReturnPage());
@@ -197,11 +198,23 @@ class WeblinksControllerWeblink extends JControllerForm
 	 * @return	void
 	 * @since	1.6
 	 */
-	protected function postSaveHook(JModelLegacy &$model, $validData = array())
+	protected function postSaveHook(JModelLegacy $model, $validData = array())
 	{
 		$task = $this->getTask();
 
-		if ($task == 'save') {
+		$item = $model->getItem(); 
+		$id = $item->get('id');
+		$tags = $validData['tags'];
+
+		// Store the tag data if the weblink data was saved.
+		if ($tags )
+		{
+			$tagsHelper = new JTagsHelper;
+			$tagsHelper->tagItem($id, 'com_weblinks.weblink', $tags);
+		}
+
+		if ($task == 'save')
+		{
 			$this->setRedirect(JRoute::_('index.php?option=com_weblinks&view=category&id='.$validData['catid'], false));
 		}
 	}
@@ -217,12 +230,15 @@ class WeblinksControllerWeblink extends JControllerForm
 	 */
 	public function save($key = null, $urlVar = 'w_id')
 	{
-		$result = parent::save($key, $urlVar);
 
+		$result = parent::save($key, $urlVar);
+		
 		// If ok, redirect to the return page.
-		if ($result) {
+		if ($result)
+		{
 			$this->setRedirect($this->getReturnPage());
 		}
+		$model = $this->getModel();
 
 		return $result;
 	}

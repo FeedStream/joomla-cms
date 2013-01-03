@@ -379,11 +379,15 @@ class ContactModelContact extends JModelAdmin
 	 */
 	public function getItem($pk = null)
 	{
-		if ($item = parent::getItem($pk)) {
+		if ($item = parent::getItem($pk))
+		{
 			// Convert the params field to an array.
 			$registry = new JRegistry;
 			$registry->loadString($item->metadata);
 			$item->metadata = $registry->toArray();
+
+			$item->tags = new JTagsHelper;
+			$item->tags->getTagIds($item->id, 'com_contact.contact');
 		}
 
 		return $item;

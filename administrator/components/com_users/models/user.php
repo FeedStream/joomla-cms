@@ -49,6 +49,9 @@ class UsersModelUser extends JModelAdmin
 	{
 		$result = parent::getItem($pk);
 
+		$result->tags = new JTagsHelper;
+		$result->tags->getTagIds($result->id, 'com_users.user');
+
 		// Get the dispatcher and load the users plugins.
 		$dispatcher	= JEventDispatcher::getInstance();
 		JPluginHelper::importPlugin('user');
